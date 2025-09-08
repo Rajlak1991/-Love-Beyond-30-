@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    /* Wider Photo Column */
+    th:nth-child(7), td:nth-child(7) {
+      width: 150px;
+    }
+
+    /* Photo styling */
+    img {
+      border-radius: 5px;
+      max-width: 120px;
+      max-height: 120px;
+      object-fit: cover;
+    }
+
+    .logout-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: red;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .logout-btn:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Address</th>
+        <th>DOB</th>
+        <th>Mobile</th>
+        <th>Qualification</th>
+        <th>Expectation</th>
+        <th>Photo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for username, profile in profiles.items() %}
+        <tr>
+          <td>{{ profile['full_name'] }}</td>
+          <td>{{ profile['address'] }}</td>
+          <td>{{ profile['dob'] }}</td>
+          <td>{{ profile['mobile'] }}</td>
+          <td>{{ profile['qualification'] }}</td>
+          <td>{{ profile['expectation'] }}</td>
+          <td>
+            {% if profile.get('photo') %}
+              <a href="{{ url_for('static', filename='uploads/' + profile['photo']) }}" target="_blank">
+                <img src="{{ url_for('static', filename='uploads/' + profile['photo']) }}" 
+                     alt="User Photo" width="100">
+              </a>
+            {% else %}
+              No Photo
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <form method="POST" action="{{ url_for('logout') }}">
+    <button type="submit" class="logout-btn">Logout</button>
+  </form>
+</body>
+</html>
