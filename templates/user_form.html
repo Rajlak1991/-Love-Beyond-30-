@@ -1,50 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    body { font-family: Arial; background: #f9f9f9; display: flex; flex-direction: column; align-items: center; }
-    .container { background: #fff; padding: 20px; margin: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; width: 90%; }
-    h1 { text-align: center; }
-    form { display: flex; flex-direction: column; }
-    label { margin-top: 15px; font-weight: bold; }
-    input, textarea, button { margin-top: 5px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em; }
-    textarea { resize: vertical; }
-    button { background-color: #4CAF50; color: white; border: none; margin-top: 20px; cursor: pointer; }
-    button:hover { background-color: #45a049; }
-    #preview { margin-top: 10px; display: none; width: 150px; height: auto; border-radius: 10px; object-fit: cover; border: 1px solid #ccc; }
+    /* Box sizing + simple reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html,body { height: 100%; margin: 0; font-family: "Poppins", Arial, sans-serif; }
+
+    /* Background (kept from earlier) */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(270deg, #ff9966, #ff5e62, #6a11cb, #2575fc);
+      background-size: 600% 600%;
+      animation: bgShift 18s ease infinite;
+    }
+    @keyframes bgShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+    /* Card */
+    .container {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      margin: 0 0 18px 0;
+      font-size: 1.6rem;
+      text-align: center;
+      background: linear-gradient(90deg, #ff5e62, #2575fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Two-column form grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;      /* left = labels, right = inputs */
+      gap: 12px 18px;                        /* row-gap, column-gap */
+      align-items: center;
+    }
+
+    /* Make controls span both columns when needed (e.g., submit) */
+    .full-row { grid-column: 1 / -1; }
+
+    /* Labels */
+    label {
+      justify-self: end;      /* right-align labels in left column */
+      font-weight: 600;
+      color: #333;
+      padding-right: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* Inputs & textareas */
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid #d6d6d6;
+      font-size: 0.95rem;
+      transition: box-shadow .2s ease, border-color .2s ease, transform .08s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus,
+    input[type="file"]:focus {
+      outline: none;
+      border-color: #6a11cb;
+      box-shadow: 0 6px 18px rgba(106,17,203,0.12);
+      transform: translateY(-1px);
+    }
+
+    textarea { min-height: 88px; resize: vertical; }
+
+    /* File input container so preview appears below control */
+    .file-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #preview {
+      display: none;
+      width: 150px;
+      height: auto;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid #2575fc;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      align-self: start;
+      animation: popIn .28s ease;
+    }
+    @keyframes popIn { from { transform: scale(.96); opacity: 0 } to { transform: scale(1); opacity:1 } }
+
+    /* Submit button centered and full-row */
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    button[type="submit"] {
+      padding: 12px 26px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(90deg,#6a11cb,#2575fc);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(37,117,252,0.18);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    button[type="submit"]:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(37,117,252,0.22); }
+
+    /* Small-screen responsive: stack labels above inputs */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      label { justify-self: start; padding-right: 0; }
+      .full-row { grid-column: 1 / -1; }
+      #preview { width: 120px; }
+    }
+
+    /* accessibility focus outline */
+    input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid rgba(37,117,252,0.15); outline-offset: 2px; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Complete Your Profile</h1>
+
     <form action="{{ url_for('submit_user_form') }}" method="POST" enctype="multipart/form-data">
-      <label>Full Name:</label>
-      <input type="text" name="full_name" required>
+      <div class="form-grid">
 
-      <label>Address:</label>
-      <input type="text" name="address" required>
+        <label for="full_name">Full Name</label>
+        <input id="full_name" name="full_name" type="text" required>
 
-      <label>Date of Birth:</label>
-      <input type="date" name="dob" required>
+        <label for="address">Address</label>
+        <input id="address" name="address" type="text" required>
 
-      <label>Mobile Number:</label>
-      <input type="text" name="mobile" pattern="\d{10}" title="Enter 10-digit number" required>
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" required>
 
-      <label>Upload Your Photo:</label>
-      <input type="file" name="photo" id="photo" accept="image/*" required>
-      <img id="preview" src="#" alt="Photo Preview">
+        <label for="mobile">Mobile Number</label>
+        <input id="mobile" name="mobile" type="text" pattern="\d{10}" title="Enter 10-digit number" required>
 
-      <label>Qualification:</label>
-      <input type="text" name="qualification" required>
+        <label for="photo">Upload Your Photo</label>
+        <div class="file-wrap">
+          <input id="photo" name="photo" type="file" accept="image/*" required>
+          <img id="preview" src="#" alt="Photo preview">
+        </div>
 
-      <label>Your Expectations:</label>
-      <textarea name="expectation" rows="4"></textarea>
+        <label for="qualification">Qualification</label>
+        <input id="qualification" name="qualification" type="text" required>
 
-      <button type="submit">Submit</button>
+        <label for="expectation">Your Expectations</label>
+        <textarea id="expectation" name="expectation" rows="4"></textarea>
+
+        <!-- submit row spans both columns -->
+        <div class="full-row form-actions">
+          <button type="submit">Submit</button>
+        </div>
+      </div>
     </form>
   </div>
 
@@ -52,10 +181,12 @@
     const photoInput = document.getElementById('photo');
     const preview = document.getElementById('preview');
     photoInput.addEventListener('change', function() {
-      const file = this.files[0];
-      if(file){
+      const file = this.files && this.files[0];
+      if (file) {
         preview.src = URL.createObjectURL(file);
         preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
       }
     });
   </script>
