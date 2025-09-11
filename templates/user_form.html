@@ -148,23 +148,35 @@
         <label for="full_name">Full Name</label>
         <input id="full_name" name="full_name" type="text" required>
 
-        <label for="address">Address</label>
-        <input id="address" name="address" type="text" required>
+        <label for="country">country</label>
+        <input id="country" name="country" type="text" required>
 
-        <label for="dob">Date of Birth</label>
-        <input id="dob" name="dob" type="date" required>
+        <label for="dob">Expected to Travel</label>
+        <input id="EoT" name="Eot" type="date" required>
+
+        <label for="duration">duration in days</label>
+        <input id="duration" name="duration" type="number" required>
 
         <label for="mobile">Mobile Number</label>
         <input id="mobile" name="mobile" type="text" pattern="\d{10}" title="Enter 10-digit number" required>
 
-        <label for="photo">Upload Your Photo</label>
+        <label for="photo">Upload Your Visa page</label>
         <div class="file-wrap">
           <input id="photo" name="photo" type="file" accept="image/*" required>
           <img id="preview" src="#" alt="Photo preview">
         </div>
 
-        <label for="qualification">Qualification</label>
-        <input id="qualification" name="qualification" type="text" required>
+        <fieldset class="full-row">
+        <legend>Safe Travel by:</legend>
+        <div class="checkbox-group">
+        <label><input type="checkbox" name="Transport" value="bike" required> Motor bike</label>
+        <label><input type="checkbox" name="Transport" value="Bus"> Bus</label>
+        <label><input type="checkbox" name="Transport" value="Train"> Train</label>
+        <label><input type="checkbox" name="Transport" value="Car" required> Car</label>
+        </div>
+        </fieldset>
+
+       
 
         <label for="expectation">Your Expectations</label>
         <textarea id="expectation" name="expectation" rows="4"></textarea>
